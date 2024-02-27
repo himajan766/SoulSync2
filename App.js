@@ -1,31 +1,8 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import AppNavigator from './navigation/AppNavigator';
 
-import Chat from './screens/Chat';
-import Messages from './screens/Messages';
+const App = () => {
+  return <AppNavigator />;
+};
 
-const Stack = createStackNavigator();
-
-function ChatStack () {
-  return (
-    <Stack.Navigator>
-      <Stack.Screen name='Chat' component={Chat} />
-    </Stack.Navigator>
-  )
-}
-
-function RootNavigator() {
-
-  return (
-    <NavigationContainer>
-      <ChatStack />
-    </NavigationContainer>
-  )
-}
-
-export default function App() {
-  return (
-    <RootNavigator />
-  )
-}
+export default App;
