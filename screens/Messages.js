@@ -14,7 +14,7 @@ const Messages = [
   },
   {
     id: '2',
-    userName: 'John Doe',
+    userName: 'Harry Potter',
     messageTime: '2 hours ago',
     messageText:
       'Hey there, this is my test for a post of my social app in React Native.',
