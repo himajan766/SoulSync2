@@ -9,64 +9,84 @@ const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
-    const apiUrl = 'http://127.0.0.1:8000/soul_sync/ai_wingman_initiate_chat/';
-
     const initiateChat = async () => {
       try {
         // Make a POST request to initiate the chat
-        const response = await axios.post(apiUrl, {
-          from_id: 'user123',
-          to_id: 'user000',
-        });
+        const initiateResponse = await axios.post(
+          'http://127.0.0.1:8000/soul_sync/ai_wingman_initiate_chat/',
+          {
+            from_id: 'user123',
+            to_id: 'user000',
+          }
+        );
 
-        // Handle the response as needed
-        console.log('Initiate Chat Response:', response.data);
+        // Handle the initiation response as needed
+        console.log('Initiate Chat Response:', initiateResponse.data);
 
-        // Fetch messages after initiating the chat
-        fetchMessages();
+        // Display the AI's initial message
+        const aiInitialMessage = {
+          _id: initiateResponse.data.message_id,
+          text: initiateResponse.data.text_message,
+          createdAt: new Date(initiateResponse.data.time),
+          user: {
+            _id: initiateResponse.data.from_id,
+            avatar: 'https://placeimg.com/140/140/any', // Adjust as needed
+          },
+        };
+
+        setMessages([aiInitialMessage]);
       } catch (error) {
         console.error('Error initiating chat:', error);
       }
     };
 
-    const fetchMessages = async () => {
-      try {
-        // Make a GET request to fetch messages
-        const messagesResponse = await axios.get(
-          'http://127.0.0.1:8000/soul_sync/get_messages/?from_id=user123&to_id=user000&offset=0&limit=20'
-        );
-
-        // Extract relevant information from the backend response
-        const backendMessages = messagesResponse.data.map(msg => ({
-          _id: msg.message_id.toString(),
-          text: msg.text_message,
-          createdAt: new Date(msg.timestamp), // adjust according to your backend response
-          user: {
-            _id: msg.from_id.toString(),
-            avatar: 'https://placeimg.com/140/140/any', // adjust as needed
-          },
-        }));
-
-        // Update the state with the backend messages
-        setMessages(backendMessages);
-      } catch (error) {
-        console.error('Error fetching messages:', error);
-      }
-    };
-
-    // Call the initiateChat function when the component mounts
     initiateChat();
   }, []);
 
-  const onSend = useCallback((newMessages = []) => {
-    // Update the state with the new messages
+  const onSend = useCallback(async (newMessages = []) => {
+    // Display the user's sent message
+    const sentMessage = {
+      _id: newMessages[0]._id,
+      text: newMessages[0].text,
+      createdAt: new Date(),
+      user: {
+        _id: 'user123',
+        avatar: 'https://placeimg.com/140/140/any', // Adjust as needed
+      },
+    };
+
     setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, newMessages),
+      GiftedChat.append(previousMessages, [sentMessage])
     );
 
-    // Additional logic to send the new messages to the backend if needed
-    // ...
+    try {
+      // Make a backend call to get AI reply
+      const aiReplyResponse = await axios.post(
+        'http://127.0.0.1:8000/soul_sync/ai_wingman_chat/',
+        {
+          text_message: newMessages[0].text,
+          from_id: 'user000',
+          to_id: 'user123',
+        }
+      );
 
+      // Display AI's reply on the other side of the chat screen
+      const aiReply = {
+        _id: aiReplyResponse.data.message_id,
+        text: aiReplyResponse.data.text_message,
+        createdAt: new Date(aiReplyResponse.data.time),
+        user: {
+          _id: aiReplyResponse.data.from_id,
+          avatar: 'https://placeimg.com/140/140/any', // Adjust as needed
+        },
+      };
+
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, [aiReply])
+      );
+    } catch (error) {
+      console.error('Error getting AI reply:', error);
+    }
   }, []);
 
   const renderSend = props => {
@@ -91,6 +111,9 @@ const ChatScreen = () => {
         wrapperStyle={{
           right: {
             backgroundColor: '#2e64e5',
+          },
+          left: {
+            backgroundColor: '#f0f0f0', // Color for AI's reply
           },
         }}
         textStyle={{
