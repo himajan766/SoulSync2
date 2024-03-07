@@ -25,7 +25,7 @@ const Profile = () => {
   return (
     <View style={styles.container}>
       <Image
-        source={require('/Users/anikahalder/SoulSync2/assets/ProfilePhoto.png')}
+        source={require('../assets/ProfilePhoto.png')}
         style={styles.profileImage}
       />
       <View style={styles.contentContainer}>
@@ -59,7 +59,7 @@ const Profile = () => {
             onPress={() => handleToggleTracking('instagram')}
           >
             <Image
-              source={require('/Users/anikahalder/SoulSync2/assets/instagram-icon.png')}
+              source={require('../assets/instagram-icon.png')}
               style={styles.icon}
             />
             <Text style={instagramTracked ? styles.boldText : null}>
@@ -71,7 +71,7 @@ const Profile = () => {
             onPress={() => handleToggleTracking('facebook')}
           >
             <Image
-              source={require('/Users/anikahalder/SoulSync2/assets/facebook-icon.png')}
+              source={require('../assets/facebook-icon.png')}
               style={styles.icon}
             />
             <Text style={facebookTracked ? styles.boldText : null}>
@@ -83,7 +83,7 @@ const Profile = () => {
             onPress={() => handleToggleTracking('spotify')}
           >
             <Image
-              source={require('/Users/anikahalder/SoulSync2/assets/spotify-icon.png')}
+              source={require('../assets/spotify-icon.png')}
               style={styles.icon}
             />
             <Text style={spotifyTracked ? styles.boldText : null}>
