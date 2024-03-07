@@ -5,6 +5,9 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
 
+const USER = 'user113';
+const AI = 'user000';
+
 const ChatScreen = () => {
   const [messages, setMessages] = useState([]);
 
@@ -15,8 +18,8 @@ const ChatScreen = () => {
         const initiateResponse = await axios.post(
           'http://127.0.0.1:8000/soul_sync/ai_wingman_initiate_chat/',
           {
-            from_id: 'user123',
-            to_id: 'user000',
+            from_id: USER,
+            to_id: AI,
           }
         );
 
@@ -50,7 +53,7 @@ const ChatScreen = () => {
       text: newMessages[0].text,
       createdAt: new Date(),
       user: {
-        _id: 'user123',
+        _id: USER,
         avatar: 'https://placeimg.com/140/140/any',
       },
     };
@@ -65,8 +68,8 @@ const ChatScreen = () => {
         'http://127.0.0.1:8000/soul_sync/ai_wingman_chat/',
         {
           text_message: newMessages[0].text,
-          from_id: 'user000',
-          to_id: 'user123',
+          from_id: AI,
+          to_id: USER,
         }
       );
 
@@ -134,7 +137,7 @@ const ChatScreen = () => {
       messages={messages}
       onSend={newMessages => onSend(newMessages)}
       user={{
-        _id: 'user123',
+        _id: USER,
       }}
       renderBubble={renderBubble}
       alwaysShowSend

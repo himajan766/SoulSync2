@@ -6,44 +6,27 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 const Messages = [
   {
     id: '1',
-    userName: 'Pikachu',
+    userName: 'Pikachu (AI)',
     messageTime: '4 mins ago',
-    messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    userAvatar: 'https://placekitten.com/40/40',
+    messageText: 'That sounds great!',
+    userAvatar: 'https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png',
   },
   {
     id: '2',
-    userName: 'Harry Potter',
+    userName: 'Selina Paul',
     messageTime: '2 hours ago',
     messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
+      'I am looking forward to that :)',
     userAvatar: 'https://placekitten.com/40/40',
   },
   {
     id: '3',
-    userName: 'Ken William',
+    userName: 'Kristy William',
     messageTime: '1 hours ago',
     messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
+      'I know right!!! We should totally go next time.',
     userAvatar: 'https://placekitten.com/40/40',
-  },
-  {
-    id: '4',
-    userName: 'Selina Paul',
-    messageTime: '1 day ago',
-    messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    userAvatar: 'https://placekitten.com/40/40',
-  },
-  {
-    id: '5',
-    userName: 'Christy Alex',
-    messageTime: '2 days ago',
-    messageText:
-      'Hey there, this is my test for a post of my social app in React Native.',
-    userAvatar: 'https://placekitten.com/40/40',
-  },
+  }
 ];
 
 const MessagesScreen = ({navigation }) => {
