@@ -30,7 +30,7 @@ const ChatScreen = () => {
           createdAt: new Date(initiateResponse.data.time),
           user: {
             _id: initiateResponse.data.from_id,
-            avatar: 'https://placeimg.com/140/140/any', // Adjust as needed
+            avatar: 'https://placeimg.com/140/140/any',
           },
         };
 
@@ -51,7 +51,7 @@ const ChatScreen = () => {
       createdAt: new Date(),
       user: {
         _id: 'user123',
-        avatar: 'https://placeimg.com/140/140/any', // Adjust as needed
+        avatar: 'https://placeimg.com/140/140/any',
       },
     };
 
@@ -70,14 +70,14 @@ const ChatScreen = () => {
         }
       );
 
-      // Display AI's reply on the other side of the chat screen
+      // Display AI's reply
       const aiReply = {
         _id: aiReplyResponse.data.message_id,
         text: aiReplyResponse.data.text_message,
         createdAt: new Date(aiReplyResponse.data.time),
         user: {
           _id: aiReplyResponse.data.from_id,
-          avatar: 'https://placeimg.com/140/140/any', // Adjust as needed
+          avatar: 'https://placeimg.com/140/140/any',
         },
       };
 
@@ -113,7 +113,7 @@ const ChatScreen = () => {
             backgroundColor: '#2e64e5',
           },
           left: {
-            backgroundColor: '#f0f0f0', // Color for AI's reply
+            backgroundColor: '#e0e0e0', // Color for AI's reply
           },
         }}
         textStyle={{
