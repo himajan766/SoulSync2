@@ -7,6 +7,7 @@ import Chat from '../screens/Chat';
 import Messages from '../screens/Messages';
 import { Profiler } from 'react';
 import Profile from '../screens/Profile'; 
+import Home from '../screens/Home'; 
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -27,16 +28,11 @@ const AppNavigator = () => {
       }}>
         <Tab.Screen name="Profile" component={Profile} />
         <Tab.Screen name="Messages"  component={MessagesStack} />
+        <Tab.Screen name="Home"  component={Home} />
       </Tab.Navigator>
     </NavigationContainer>
   );
 };
 
 export default AppNavigator;
-
-AppNavigator.js
-
-
-
-
 
