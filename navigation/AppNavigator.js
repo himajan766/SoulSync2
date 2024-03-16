@@ -8,6 +8,7 @@ import Messages from '../screens/Messages';
 import { Profiler } from 'react';
 import Profile from '../screens/Profile'; 
 import Home from '../screens/Home'; 
+import Suggestions from '../screens/Suggestions'; 
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -29,6 +30,7 @@ const AppNavigator = () => {
         <Tab.Screen name="Profile" component={Profile} />
         <Tab.Screen name="Messages"  component={MessagesStack} />
         <Tab.Screen name="Home"  component={Home} />
+        <Tab.Screen name="Suggestions"  component={Suggestions} />
       </Tab.Navigator>
     </NavigationContainer>
   );
