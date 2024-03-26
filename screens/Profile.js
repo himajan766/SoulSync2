@@ -1,10 +1,53 @@
-import React, { useState } from 'react';
-import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, Image, StyleSheet, ScrollView } from 'react-native';
+import { Avatar, Card, Title, Paragraph, Switch } from 'react-native-paper';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const Profile = () => {
+const Profile = ({ route }) => {
+  const [userProfile, setUserProfile] = useState(null);
   const [instagramTracked, setInstagramTracked] = useState(false);
   const [facebookTracked, setFacebookTracked] = useState(false);
   const [spotifyTracked, setSpotifyTracked] = useState(false);
+  const [token, setToken] = useState('');
+
+  useEffect(() => {
+    const getToken = async () => {
+      try {
+        const token = await AsyncStorage.getItem('accessToken');
+        if (token !== null) {
+          setToken(token);
+          fetchUserProfile(token);
+        }
+      } catch (error) {
+        console.error('Error retrieving token:', error);
+      }
+    };
+
+    getToken();
+  }, []);
+
+  const fetchUserProfile = async (token) => {
+    try {
+      const response = await axios.get('https://soulsync-v1.onrender.com/user_profiles', {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/json',
+        },
+      });
+      setUserProfile(response.data);
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (userProfile) {
+      setInstagramTracked(userProfile.instagramTracked);
+      setFacebookTracked(userProfile.facebookTracked);
+      setSpotifyTracked(userProfile.spotifyTracked);
+    }
+  }, [userProfile]);
 
   const handleToggleTracking = (platform) => {
     switch (platform) {
@@ -22,130 +65,93 @@ const Profile = () => {
     }
   };
 
+  if (!userProfile) {
+    return <Text>Loading...</Text>;
+  }
+
   return (
-    <View style={styles.container}>
-      <Image
+    <ScrollView contentContainerStyle={styles.container}>
+      <Avatar.Image
+        size={150}
         source={require('../assets/ProfilePhoto.png')}
         style={styles.profileImage}
       />
-      <View style={styles.contentContainer}>
-        <View style={styles.aboutContainer}>
-          <Text style={styles.sectionTitle}>About</Text>
-          <View style={styles.infoBox}>
-            <Text>Occupation:</Text>
-            <Text style={styles.infoText}>Software Developer</Text>
-          </View>
-          <View style={styles.infoBox}>
-            <Text>Interests:</Text>
-            <Text style={styles.infoText}>Hiking, reading, painting</Text>
-          </View>
-          <View style={styles.infoBox}>
-            <Text>Age:</Text>
-            <Text style={styles.infoText}>25</Text>
-          </View>
-          <View style={styles.infoBox}>
-            <Text>Location:</Text>
-            <Text style={styles.infoText}>City, Country</Text>
-          </View>
-          <View style={styles.infoBox}>
-            <Text>Bio:</Text>
-            <Text style={styles.infoText}>Love being outdoors and meeting new people.</Text>
-          </View>
-        </View>
-        <View style={styles.optionsContainer}>
-          <Text style={styles.sectionTitle}>Options</Text>
-          <TouchableOpacity
-            style={styles.optionItem}
-            onPress={() => handleToggleTracking('instagram')}
-          >
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title>About</Title>
+          <Paragraph>Occupation: {userProfile.occupation}</Paragraph>
+          <Paragraph>Interests: {userProfile.interests}</Paragraph>
+          <Paragraph>Age: {userProfile.age}</Paragraph>
+          <Paragraph>Location: {userProfile.location}</Paragraph>
+          <Paragraph>Bio: {userProfile.bio}</Paragraph>
+        </Card.Content>
+      </Card>
+      <Card style={styles.card}>
+        <Card.Content>
+          <Title>Options</Title>
+          <View style={styles.optionItem}>
             <Image
               source={require('../assets/instagram-icon.png')}
               style={styles.icon}
             />
-            <Text style={instagramTracked ? styles.boldText : null}>
-              Let app track Instagram
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.optionItem}
-            onPress={() => handleToggleTracking('facebook')}
-          >
+            <Paragraph>Let app track Instagram</Paragraph>
+            <Switch
+              value={instagramTracked}
+              onValueChange={() => handleToggleTracking('instagram')}
+            />
+          </View>
+          <View style={styles.optionItem}>
             <Image
               source={require('../assets/facebook-icon.png')}
               style={styles.icon}
             />
-            <Text style={facebookTracked ? styles.boldText : null}>
-              Let app track Facebook
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.optionItem}
-            onPress={() => handleToggleTracking('spotify')}
-          >
+            <Paragraph>Let app track Facebook</Paragraph>
+            <Switch
+              value={facebookTracked}
+              onValueChange={() => handleToggleTracking('facebook')}
+            />
+          </View>
+          <View style={styles.optionItem}>
             <Image
               source={require('../assets/spotify-icon.png')}
               style={styles.icon}
             />
-            <Text style={spotifyTracked ? styles.boldText : null}>
-              Let app track Spotify
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </View>
+            <Paragraph>Let app track Spotify</Paragraph>
+            <Switch
+              value={spotifyTracked}
+              onValueChange={() => handleToggleTracking('spotify')}
+            />
+          </View>
+        </Card.Content>
+      </Card>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flexGrow: 1,
     alignItems: 'center',
-    justifyContent: 'flex-start', // Align content at the top
-    paddingTop: 70, // Add padding at the top
-  },
-  profileImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
-    marginBottom: 20,
-  },
-  contentContainer: {
+    justifyContent: 'center',
     paddingHorizontal: 20,
   },
-  aboutContainer: {
+  profileImage: {
     marginBottom: 20,
   },
-  optionsContainer: {
-    marginTop: 20,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  infoBox: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    borderColor: '#ccc',
-    paddingVertical: 10,
-    marginBottom: 10,
-  },
-  infoText: {
-    marginLeft: 10,
+  card: {
+    marginBottom: 20,
+    width: '100%',
   },
   optionItem: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
     marginBottom: 10,
   },
   icon: {
     width: 30,
     height: 30,
     marginRight: 10,
-  },
-  boldText: {
-    fontWeight: 'bold',
   },
 });
 

@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, FlatList } from 'react-native';
+import { View, StyleSheet, FlatList } from 'react-native';
+import { Avatar, Text, List } from 'react-native-paper';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-
 
 const Messages = [
   {
@@ -29,60 +29,50 @@ const Messages = [
   }
 ];
 
-const MessagesScreen = ({navigation }) => {
-    const renderChatItem = ({ item }) => (
-      <TouchableOpacity onPress={() => navigation.navigate('Chat', { userName: item.userName })}>
-        <View style={styles.chatItem}>
-          <Image source={{ uri: item.userAvatar }} style={styles.userAvatar} />
-          <View style={styles.messageContent}>
-            <Text style={styles.userName}>{item.userName}</Text>
-            <Text style={styles.messageTime}>{item.messageTime}</Text>
-            <Text style={styles.messageText}>{item.messageText}</Text>
-          </View>
-        </View>
-      </TouchableOpacity>
-    );
-  
-    return (
-      <View style={styles.container}>
-        <FlatList
-          data={Messages}
-          keyExtractor={item => item.id}
-          renderItem={renderChatItem}
-        />
+const MessagesScreen = ({ navigation }) => {
+  const renderChatItem = ({ item }) => (
+    <TouchableOpacity onPress={() => navigation.navigate('Chat', { userName: item.userName })}>
+      <List.Item
+        title={item.userName}
+        description={item.messageText}
+        left={() => <Avatar.Image size={50} source={{ uri: item.userAvatar }} />}
+        right={() => <Text style={styles.messageTime}>{item.messageTime}</Text>}
+        style={styles.chatItem}
+        titleStyle={styles.userName}
+        descriptionStyle={styles.messageText}
+      />
+    </TouchableOpacity>
+  );
 
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={Messages}
+        keyExtractor={item => item.id}
+        renderItem={renderChatItem}
+      />
+    </View>
+  );
+};
 
-      </View>
-    );
-  };
-  
-  export default MessagesScreen;
-  
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    chatItem: {
-      borderBottomWidth: 1,
-      borderBottomColor: '#ccc',
-      padding: 10,
-    },
-    userAvatar: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
-      marginRight: 10,
-    },
-    userName: {
-      fontSize: 18,
-      fontWeight: 'bold',
-    },
-    messageTime: {
-      color: '#888',
-    },
-    messageText: {
-      marginTop: 5,
-    },
-  });
+export default MessagesScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  chatItem: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+  },
+  userName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  messageTime: {
+    color: '#888',
+  },
+  messageText: {
+    fontSize: 16,
+  },
+});

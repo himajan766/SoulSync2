@@ -1,95 +1,74 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Bubble, GiftedChat, Send } from 'react-native-gifted-chat';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const USER = 'user113';
+const USER = 'user117';
 const AI = 'user000';
 
-const ChatScreen = () => {
+const ChatScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([]);
+  const [token, setToken] = useState('');
 
   useEffect(() => {
-    const initiateChat = async () => {
+    const getToken = async () => {
       try {
-        // Make a POST request to initiate the chat
-        const initiateResponse = await axios.post(
-          'http://127.0.0.1:8000/soul_sync/ai_wingman_initiate_chat/',
-          {
-            from_id: USER,
-            to_id: AI,
-          }
-        );
-
-        // Handle the initiation response as needed
-        console.log('Initiate Chat Response:', initiateResponse.data);
-
-        // Display the AI's initial message
-        const aiInitialMessage = {
-          _id: initiateResponse.data.message_id,
-          text: initiateResponse.data.text_message,
-          createdAt: new Date(initiateResponse.data.time),
-          user: {
-            _id: initiateResponse.data.from_id,
-            avatar: 'https://placeimg.com/140/140/any',
-          },
-        };
-
-        setMessages([aiInitialMessage]);
+        const userToken = await AsyncStorage.getItem('accessToken');
+        console.log("Chat");
+        console.log(userToken);
+        
+        if (userToken !== null) {
+          setToken(userToken);
+          initiateChat(userToken);
+        }
       } catch (error) {
-        console.error('Error initiating chat:', error);
+        console.error('Error retrieving token:', error);
       }
     };
 
-    initiateChat();
+    getToken();
   }, []);
 
-  const onSend = useCallback(async (newMessages = []) => {
-    // Display the user's sent message
-    const sentMessage = {
-      _id: newMessages[0]._id,
-      text: newMessages[0].text,
-      createdAt: new Date(),
-      user: {
-        _id: USER,
-        avatar: 'https://placeimg.com/140/140/any',
-      },
-    };
-
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, [sentMessage])
-    );
-
+  const initiateChat = async (userToken) => {
     try {
-      // Make a backend call to get AI reply
-      const aiReplyResponse = await axios.post(
-        'http://127.0.0.1:8000/soul_sync/ai_wingman_chat/',
+      const response = await axios.get(
+        'https://soulsync-v1.onrender.com/soul_sync/ai_wingman_initiate_conversation',
         {
-          text_message: newMessages[0].text,
-          from_id: AI,
-          to_id: USER,
+          headers: {
+            'Authorization': `bearer ${userToken}`,
+            'accept': 'application/json',
+          },
         }
       );
 
-      // Display AI's reply
-      const aiReply = {
-        _id: aiReplyResponse.data.message_id,
-        text: aiReplyResponse.data.text_message,
-        createdAt: new Date(aiReplyResponse.data.time),
+      // Handle the initiation response
+      console.log('Initiate Chat Response:', response.data);
+
+      // Display the AI's initial message
+      const aiInitialMessage = {
+        _id: response.data.message_id,
+        text: response.data.text_message,
+        createdAt: new Date(response.data.time),
         user: {
-          _id: aiReplyResponse.data.from_id,
+          _id: response.data.from_id,
           avatar: 'https://placeimg.com/140/140/any',
         },
       };
 
-      setMessages(previousMessages =>
-        GiftedChat.append(previousMessages, [aiReply])
-      );
+      setMessages([aiInitialMessage]);
     } catch (error) {
-      console.error('Error getting AI reply:', error);
+      console.error('Error initiating chat:', error);
+      Alert.alert('Error', 'Failed to initiate chat');
     }
+  };
+
+  const onSend = useCallback(async (newMessages = []) => {
+    // Update the state with the new message
+    setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
+    // Your send message logic here
   }, []);
 
   const renderSend = props => {
@@ -116,7 +95,7 @@ const ChatScreen = () => {
             backgroundColor: '#2e64e5',
           },
           left: {
-            backgroundColor: '#e0e0e0', // Color for AI's reply
+            backgroundColor: '#e0e0e0',
           },
         }}
         textStyle={{
@@ -133,18 +112,21 @@ const ChatScreen = () => {
   };
 
   return (
-    <GiftedChat
-      messages={messages}
-      onSend={newMessages => onSend(newMessages)}
-      user={{
-        _id: USER,
-      }}
-      renderBubble={renderBubble}
-      alwaysShowSend
-      renderSend={renderSend}
-      scrollToBottom
-      scrollToBottomComponent={scrollToBottomComponent}
-    />
+    <View style={styles.container}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+        <MaterialCommunityIcons name="arrow-left" size={24} color="black" />
+      </TouchableOpacity>
+      <GiftedChat
+        messages={messages}
+        onSend={newMessages => onSend(newMessages)}
+        user={{ _id: USER }}
+        renderBubble={renderBubble}
+        alwaysShowSend
+        renderSend={renderSend}
+        scrollToBottom
+        scrollToBottomComponent={scrollToBottomComponent}
+      />
+    </View>
   );
 };
 
@@ -153,7 +135,11 @@ export default ChatScreen;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  backButton: {
+    position: 'absolute',
+    top: 20,
+    left: 20,
+    zIndex: 1,
   },
 });
