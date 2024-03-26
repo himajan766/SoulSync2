@@ -1,4 +1,4 @@
-# React Native Frontend Setup Guide for iOS Simulator
+# SoulSync Setup Guide for iOS Simulator
 
 This guide provides step-by-step instructions to set up and run SoulSync in an iOS simulator. Before you begin, ensure you have the necessary tools and dependencies installed on your system.
 
