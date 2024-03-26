@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert } from 'react-native';
 import { TextInput as PaperTextInput, Button as PaperButton } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const CreateProfile = ({ route }) => {
+  const navigation = useNavigation();
   const { username, password } = route.params;
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
