@@ -8,9 +8,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const ChatScreen = ({ navigation }) => {
   const [messages, setMessages] = useState([]);
-  const [token, setToken] = useState('');
-  const [conversationId, setConversationId] = useState('');
   const [userId, setUserId] = useState('');
+  const [token, setToken] = useState('');
 
   useEffect(() => {
     const loadData = async () => {
@@ -19,11 +18,6 @@ const ChatScreen = ({ navigation }) => {
         if (userToken) {
           setToken(userToken);
           initiateChat(userToken);
-          initiateConversation(userToken);
-        }
-        const storedUserId = await AsyncStorage.getItem('userId');
-        if (storedUserId) {
-          setUserId(storedUserId);
         }
       } catch (error) {
         console.error('Error retrieving data:', error);
@@ -32,29 +26,6 @@ const ChatScreen = ({ navigation }) => {
 
     loadData();
   }, []);
-
-  const initiateConversation = async (userToken) => {
-    try {
-      const response = await axios.post(
-        'https://soulsync-v1.onrender.com/conversations',
-        {},
-        {
-          headers: {
-            'Authorization': `Bearer ${userToken}`,
-            'accept': 'application/json',
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-  
-      const conversationId = response.data.id;
-      setConversationId(conversationId);
-      console.log('Conversation ID:', conversationId);
-    } catch (error) {
-      console.error('Error initiating conversation:', error);
-      Alert.alert('Error', 'Failed to initiate conversation');
-    }
-  };
   
   const initiateChat = async (userToken) => {
     try {
@@ -69,6 +40,8 @@ const ChatScreen = ({ navigation }) => {
       );
 
       console.log('Initiate Chat Response:', response.data);
+      const conversationId = response.data.conversation_id;
+      await AsyncStorage.setItem('conversationId' , conversationId);
 
       const aiInitialMessage = {
         _id: response.data.message_id,
@@ -90,7 +63,12 @@ const ChatScreen = ({ navigation }) => {
   const onSend = useCallback(async (newMessages = []) => {
     setMessages(previousMessages => GiftedChat.append(previousMessages, newMessages));
 
+    const conversationId = await AsyncStorage.getItem('conversationId');
+    console.log(conversationId);
+    const token = await AsyncStorage.getItem('accessToken');
+    const userId = await AsyncStorage.getItem('userId');
     try {
+      /*
       await axios.post(
         `https://soulsync-v1.onrender.com/conversations/${conversationId}/messages`,
         {
@@ -106,7 +84,7 @@ const ChatScreen = ({ navigation }) => {
           },
         }
       );
-
+*/
       const aiResponse = await axios.post(
         'https://soulsync-v1.onrender.com/soul_sync/ai_wingman_conversation',
         {
@@ -137,7 +115,7 @@ const ChatScreen = ({ navigation }) => {
       console.error('Error sending message to backend:', error);
       Alert.alert('Error', 'Failed to send message to backend');
     }
-  }, [conversationId, token, userId]);
+  });
 
   const renderSend = props => {
     return (

@@ -59,6 +59,8 @@ const CreateProfile = ({ route }) => {
 
       if (profileResponse.status === 200) {
         // Handle success
+        const userId = profileResponse.data.user_id;
+        await AsyncStorage.setItem('userId', userId);
         console.log('User profile created successfully:', profileResponse.data);
         navigation.navigate('BottomTabNavigator');
       } else {
