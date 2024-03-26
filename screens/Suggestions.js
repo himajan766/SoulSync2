@@ -6,48 +6,33 @@ const profiles = [
     id: 1,
     name: 'Shreya',
     age: 25,
-    occupation: 'Software Engineer',
-    interests: 'Hiking, Photography, Reading',
     location: 'San Francisco, CA',
-    bio: 'I\'m a tech enthusiast who loves exploring nature and capturing moments through photography.',
-    hobbies: 'Coding, hiking, photography, reading, traveling',
-    preferences: 'Looking for someone who shares similar interests and values.',
+    summary: 'Shreya seems to be a good match for you because she shares similar interests in technology and outdoor activities.',
     image: require('../assets/Profile1.png'),
   },
   {
     id: 2,
     name: 'Ava',
     age: 22,
-    occupation: 'Graphic Designer',
-    interests: 'Painting, Traveling, Cooking',
     location: 'New York, NY',
-    bio: 'Passionate about art and design. Always seeking inspiration from my surroundings.',
-    hobbies: 'Painting, traveling, cooking, watching movies',
-    preferences: 'Seeking a creative soul with a zest for life.',
+    summary: 'Ava could be a great match for you due to her creative nature and shared interests in artistic pursuits.',
     image: require('../assets/Profile2.png'),
   },
   {
     id: 3,
     name: 'Jenna',
     age: 24,
-    occupation: 'Teacher',
-    interests: 'Yoga, Music, Writing',
     location: 'Los Angeles, CA',
-    bio: 'Educator by profession, yogi by passion. Love spreading positivity and mindfulness.',
-    hobbies: 'Yoga, music, writing, meditation, cooking',
-    preferences: 'Looking for someone who values health, mindfulness, and personal growth.',
+    summary: 'Jenna values mindfulness and positivity, making her a potential match for those who prioritize personal growth and well-being.',
     image: require('../assets/Profile3.png'),
   },
+
   {
     id: 4,
     name: 'Luna',
     age: 23,
-    occupation: 'Marketing Specialist',
-    interests: 'Dancing, Fitness, Movies',
     location: 'Chicago, IL',
-    bio: 'Marketing professional with a love for dance and fitness. Enjoy movie nights and trying out new cuisines.',
-    hobbies: 'Dancing, fitness, watching movies, trying new foods',
-    preferences: 'Seeking someone who enjoys staying active, exploring new places, and good food.',
+    summary: 'Luna enjoys staying active and exploring new cuisines, making her a suitable match for those who share her adventurous spirit.',
     image: require('../assets/Profile4.png'),
   },
 ];
@@ -75,13 +60,12 @@ const SwipeScreen = () => {
       {currentIndex < profiles.length && (
         <TouchableOpacity onPress={() => handleProfileClick(currentIndex)}>
           <View style={styles.profileCard}>
-            <Image source={profiles[currentIndex].image} style={styles.image} />
-            <View style={styles.infoContainer}>
-              <Text style={styles.name}>{profiles[currentIndex].name}, {profiles[currentIndex].age}</Text>
-              <Text style={styles.details}>{profiles[currentIndex].occupation}</Text>
-              <Text style={styles.details}>{profiles[currentIndex].interests}</Text>
-              <Text style={styles.details}>Location: {profiles[currentIndex].location}</Text>
+            <View style={styles.imageContainer}>
+              <Image source={profiles[currentIndex].image} style={styles.image} />
             </View>
+            <Text style={styles.name}>{profiles[currentIndex].name}, {profiles[currentIndex].age}</Text>
+            <Text style={styles.location}>{profiles[currentIndex].location}</Text>
+            <Text style={styles.moreText}>Click to view more</Text>
           </View>
         </TouchableOpacity>
       )}
@@ -103,13 +87,10 @@ const SwipeScreen = () => {
       >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
-            <Text style={styles.modalText}>AI Wingman Matchmaking Analysis</Text>
+            <Text style={styles.modalText}>Match Summary</Text>
             {selectedProfile && (
               <View>
-                <Text>{selectedProfile.name} seems to be a good match for you because:</Text>
-                <Text>Bio: {selectedProfile.bio}</Text>
-                <Text>Hobbies: {selectedProfile.hobbies}</Text>
-                <Text>Preferences: {selectedProfile.preferences}</Text>
+                <Text style={styles.summaryText}>{selectedProfile.summary}</Text>
               </View>
             )}
             <TouchableHighlight
@@ -132,33 +113,45 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#f0f0f0',
   },
   profileCard: {
     borderWidth: 1,
     borderColor: '#ccc',
-    borderRadius: 10,
+    borderRadius: 20,
     padding: 20,
     backgroundColor: '#fff',
     marginBottom: 20,
     width: 300,
     alignItems: 'center',
   },
-  image: {
+  imageContainer: {
     width: 200,
     height: 200,
-    marginBottom: 10,
+    borderRadius: 100,
+    overflow: 'hidden',
+    marginBottom: 15,
   },
-  infoContainer: {
-    alignItems: 'center',
+  image: {
+    width: '100%',
+    height: '100%',
   },
   name: {
-    fontSize: 20,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 5,
+    textAlign: 'center',
+    color: '#333',
   },
-  details: {
+  location: {
     fontSize: 16,
-    marginBottom: 3,
+    marginBottom: 10,
+    textAlign: 'center',
+    color: '#666',
+  },
+  moreText: {
+    fontSize: 14,
+    color: '#2E86C1',
   },
   buttonsContainer: {
     flexDirection: 'row',
@@ -219,11 +212,15 @@ const styles = StyleSheet.create({
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
-  }
+    textAlign: "center",
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  summaryText: {
+    fontSize: 16,
+    textAlign: 'center',
+    color: '#333',
+  },
 });
 
 export default SwipeScreen;
-
-
-

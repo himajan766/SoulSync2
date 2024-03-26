@@ -23,6 +23,7 @@
     "firebase": "^10.8.0",
     "react": "18.2.0",
     "react-native": "0.73.4",
+    "react-native-deck-swiper": "^2.0.17",
     "react-native-gesture-handler": "~2.14.0",
     "react-native-gifted-chat": "^2.4.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
